@@ -1,6 +1,6 @@
 # Discord GIF Bot 🎬
 
-A Discord bot that allows users to search and send GIFs using slash commands. The bot integrates with the Giphy API to provide a wide variety of GIFs for any occasion.
+An open source Discord bot that allows users to search and send GIFs using slash commands. The bot integrates with the Giphy API to provide a wide variety of GIFs for any occasion.
 
 ## Features ✨
 
@@ -165,5 +165,6 @@ If you need help with the bot:
 3. Ensure all setup steps are completed correctly
 
 ---
+
 
 **Enjoy using your Discord GIF Bot! 🎉** 
