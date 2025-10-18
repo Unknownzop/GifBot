@@ -1,6 +1,6 @@
 # Discord GIF Bot 🎬
 
-An open source Discord bot that allows users to search and send GIFs using slash commands. The bot integrates with the Giphy API to provide a wide variety of GIFs for any occasion.
+An open source Discord bot that allows users to search and send GIFs using slash commands. The bot integrates with the Tenor API (no API key required) to provide a wide variety of GIFs for any occasion.
 
 ## Features ✨
 
@@ -34,7 +34,6 @@ Main command to send GIFs with two optional parameters:
 - Node.js (v16 or higher)
 - npm or yarn
 - Discord Bot Token
-- Giphy API Key
 
 ### Setup Steps
 
@@ -50,22 +49,21 @@ Main command to send GIFs with two optional parameters:
    ```
 
 3. **Create environment file**
-   Create a `.env` file in the root directory with the following content:
-   ```env
-   TOKEN=your_discord_bot_token_here
-   API=your_giphy_api_key_here
+   ```bash
+   cp .env.example .env
    ```
 
-4. **Get your Discord Bot Token**
+4. **Fill in your token**
+   Open `.env` and add your Discord bot token:
+   ```env
+   TOKEN=your_discord_bot_token_here
+   ```
+
+5. **Get your Discord Bot Token**
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)
    - Create a new application or select existing one
    - Go to "Bot" section
    - Copy the token and add it to your `.env` file
-
-5. **Get your Giphy API Key**
-   - Go to [Giphy Developers](https://developers.giphy.com/)
-   - Create an account and create a new app
-   - Copy the API key and add it to your `.env` file
 
 6. **Invite the bot to your server**
    - In Discord Developer Portal, go to "OAuth2" → "URL Generator"
@@ -82,7 +80,6 @@ Main command to send GIFs with two optional parameters:
 
 ### Environment Variables
 - `TOKEN`: Your Discord bot token (required)
-- `API`: Your Giphy API key (required)
 
 ### Bot Permissions
 The bot requires the following permissions:
@@ -125,9 +122,8 @@ Once the bot is running, users can use the `/gif` command in any channel where t
    - Ensure slash commands are registered
 
 2. **"Error fetching GIF" message**
-   - Check your Giphy API key is correct
-   - Verify the API key has proper permissions
    - Check your internet connection
+   - Try a different keyword or category
 
 3. **Bot not starting**
    - Verify all environment variables are set
@@ -145,6 +141,7 @@ The bot provides detailed console logs for debugging:
 - **discord.js**: Discord API wrapper
 - **axios**: HTTP client for API requests
 - **dotenv**: Environment variable management
+- **express**: Lightweight web server for health check and status
 
 ## License 📄
 
@@ -166,5 +163,5 @@ If you need help with the bot:
 
 ---
 
-
-**Enjoy using your Discord GIF Bot! 🎉** 
+**Enjoy using your Discord GIF Bot! 🎉**
+```
