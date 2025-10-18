@@ -33,6 +33,7 @@ app.listen(PORT, () => {
   console.log(`Express server running on port ${PORT}`);
 });
 
+// Slash command
 const commands = [
   new SlashCommandBuilder()
     .setName('gif')
@@ -80,10 +81,7 @@ client.once('ready', async () => {
     const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
     await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
     console.log(`Logged in as ${client.user.tag}`);
-    
-    // Set bot status
     client.user.setActivity('/gif', { type: ActivityType.Playing });
-    console.log('Bot status set to "Playing /gif"');
   } catch (error) {
     console.error('Error during bot startup:', error.message);
   }
@@ -96,49 +94,42 @@ client.on('interactionCreate', async interaction => {
   const custom = interaction.options.getString('custom');
   const query = search || custom || '';
 
-  // Set status to show fetching
   client.user.setActivity(`Fetching GIF${query ? `: ${query}` : ''}`, { type: ActivityType.Playing });
 
-  let endpoint = query
-    ? `https://api.giphy.com/v1/gifs/search?api_key=${process.env.API}&q=${encodeURIComponent(query)}&limit=25&rating=g`
-    : `https://api.giphy.com/v1/gifs/random?api_key=${process.env.API}&rating=g`;
+  const endpoint = query
+    ? `https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=LIVDSRZULELA&limit=10&contentfilter=medium`
+    : `https://g.tenor.com/v1/trending?key=LIVDSRZULELA&limit=10&contentfilter=medium`;
 
   try {
     await interaction.deferReply();
-    
-    const { data } = await axios.get(endpoint);
-    let gif;
 
-    if (query) {
-      const results = data.data;
-      if (!results || results.length === 0) {
-        // Reset status back to default
-        client.user.setActivity('/gif', { type: ActivityType.Playing });
-        return interaction.editReply({ content: 'No GIFs found for that term.' });
-      }
-      gif = results[Math.floor(Math.random() * results.length)].images.original.url;
-    } else {
-      gif = data.data.images.original.url;
+    const response = await axios.get(endpoint);
+    const results = response.data.results;
+
+    if (!results || results.length === 0) {
+      client.user.setActivity('/gif', { type: ActivityType.Playing });
+      return interaction.editReply({ content: 'No GIFs found for that term.' });
     }
 
-    // Reset status back to default
+    const random = results[Math.floor(Math.random() * results.length)];
+    const gifUrl = random.media[0].gif.url;
+
     client.user.setActivity('/gif', { type: ActivityType.Playing });
-    await interaction.editReply({ content: gif });
+    await interaction.editReply({ content: gifUrl });
   } catch (error) {
     console.error('[GIF Bot Error]', error.message);
-    
-    // Reset status back to default
+
     client.user.setActivity('/gif', { type: ActivityType.Playing });
-    
+
     if (interaction.deferred) {
-      await interaction.editReply({ content: 'Error fetching GIF. Please check your API key or try again later.' });
+      await interaction.editReply({ content: 'Error fetching GIF. Please try again later.' });
     } else {
-      await interaction.reply({ content: 'Error fetching GIF. Please check your API key or try again later.', ephemeral: true });
+      await interaction.reply({ content: 'Error fetching GIF. Please try again later.', ephemeral: true });
     }
   }
 });
 
-// Error handling for the client
+// Error handling
 client.on('error', error => {
   console.error('Discord client error:', error);
 });
@@ -163,11 +154,6 @@ process.on('SIGTERM', () => {
 // Check for required environment variables
 if (!process.env.TOKEN) {
   console.error('Missing TOKEN in environment variables');
-  process.exit(1);
-}
-
-if (!process.env.API) {
-  console.error('Missing API in environment variables');
   process.exit(1);
 }
 
